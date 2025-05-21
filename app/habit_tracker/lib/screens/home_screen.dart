@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/habit.dart';
+import '../widgets/habit_group.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,25 +10,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Habit> _habits = [];
+  final List<Habit> morningHabits = [];
+  final List<Habit> dayHabits = [];
+  final List<Habit> eveningHabits = [];
 
-  void _toggleHabit(int index) {
-    setState(() {
-      _habits[index].toggleDone();
-    });
+  void _addHabit(List<Habit> targetList) async {
+    final result = await Navigator.pushNamed(context, '/add');
+    if (result != null && result is String) {
+      setState(() {
+        targetList.add(Habit(name: result));
+      });
+    }
   }
 
-  void _addHabit(String name) {
+  void _toggleHabit(List<Habit> list, int index) {
     setState(() {
-      _habits.add(Habit(name: name));
-    });
-  }
-
-  void _navigateToAddHabit() {
-    Navigator.pushNamed(context, '/add').then((value) {
-      if (value != null && value is String) {
-        _addHabit(value);
-      }
+      list[index].toggleDone();
     });
   }
 
@@ -35,20 +33,28 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes habitudes')),
-      body: ListView.builder(
-        itemCount: _habits.length,
-        itemBuilder: (context, index) {
-          final habit = _habits[index];
-          return CheckboxListTile(
-            title: Text(habit.name),
-            value: habit.isDone,
-            onChanged: (_) => _toggleHabit(index),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToAddHabit,
-        child: const Icon(Icons.add),
+      backgroundColor: Colors.grey[200],
+      body: ListView(
+        children: [
+          HabitGroup(
+            title: 'Matin',
+            habits: morningHabits,
+            onAddHabit: () => _addHabit(morningHabits),
+            onToggleHabit: (i) => _toggleHabit(morningHabits, i),
+          ),
+          HabitGroup(
+            title: 'Journée',
+            habits: dayHabits,
+            onAddHabit: () => _addHabit(dayHabits),
+            onToggleHabit: (i) => _toggleHabit(dayHabits, i),
+          ),
+          HabitGroup(
+            title: 'Soir',
+            habits: eveningHabits,
+            onAddHabit: () => _addHabit(eveningHabits),
+            onToggleHabit: (i) => _toggleHabit(eveningHabits, i),
+          ),
+        ],
       ),
     );
   }
