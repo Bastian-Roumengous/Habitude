@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/add_habit_screen.dart';
 
 void main() {
   runApp(const HabitTrackerApp());
@@ -12,14 +11,13 @@ class HabitTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Habit Tracker',
+      title: 'Suivi d’habitudes',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.teal,
+        fontFamily: 'Roboto',
       ),
       home: const HomeScreen(),
-      routes: {
-        '/add': (context) => const AddHabitScreen(),
-      },
     );
   }
 }

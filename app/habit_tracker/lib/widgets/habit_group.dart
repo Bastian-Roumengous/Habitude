@@ -39,10 +39,9 @@ class _HabitGroupState extends State<HabitGroup>
             borderRadius: BorderRadius.circular(8),
             child: Stack(
               children: [
-                // Fond de progression (bandeau + contenu)
-                Positioned.fill(
-                  child: Container(color: Colors.white),
-                ),
+                // Fond blanc
+                Positioned.fill(child: Container(color: Colors.white)),
+                // Remplissage animé
                 Positioned.fill(
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -51,8 +50,8 @@ class _HabitGroupState extends State<HabitGroup>
                       width: constraints.maxWidth * _progress,
                       decoration: BoxDecoration(
                         color: _progress == 1.0
-                            ? Colors.green[200]!
-                            : Colors.blue[200]!,
+                            ? Colors.green[200]
+                            : Colors.blue[200],
                       ),
                     ),
                   ),
@@ -60,7 +59,7 @@ class _HabitGroupState extends State<HabitGroup>
                 // Contenu du groupe
                 Column(
                   children: [
-                    // Bandeau (titre)
+                    // Bandeau supérieur (titre)
                     GestureDetector(
                       onTap: () => setState(() => _isExpanded = !_isExpanded),
                       child: Container(
@@ -88,7 +87,7 @@ class _HabitGroupState extends State<HabitGroup>
                         ),
                       ),
                     ),
-                    // Habitudes déroulées
+                    // Liste des habitudes
                     AnimatedSize(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -99,11 +98,69 @@ class _HabitGroupState extends State<HabitGroup>
                             ...widget.habits.asMap().entries.map((entry) {
                               final index = entry.key;
                               final habit = entry.value;
-                              return CheckboxListTile(
-                                title: Text(habit.name),
-                                value: habit.isDone,
-                                onChanged: (_) =>
-                                    widget.onToggleHabit(index),
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  child: Row(
+                                    children: [
+                                      // Icône avec fond coloré
+                                      Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: habit.iconBackground ??
+                                              Colors.transparent,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          habit.icon,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      // Nom de l’habitude avec couleur de bandeau
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                          decoration: habit.color != null
+                                              ? BoxDecoration(
+                                                  color: habit.color,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                )
+                                              : null,
+                                          child: Center(
+                                            child: Text(
+                                              habit.name,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                                decoration: habit.isDone
+                                                    ? TextDecoration.lineThrough
+                                                    : TextDecoration.none,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Case à cocher
+                                      Checkbox(
+                                        value: habit.isDone,
+                                        onChanged: (_) =>
+                                            widget.onToggleHabit(index),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               );
                             }).toList(),
                             Padding(
@@ -111,8 +168,7 @@ class _HabitGroupState extends State<HabitGroup>
                               child: TextButton.icon(
                                 onPressed: widget.onAddHabit,
                                 icon: const Icon(Icons.add),
-                                label:
-                                    const Text("Ajouter une habitude"),
+                                label: const Text("Ajouter une habitude"),
                               ),
                             ),
                           ],
